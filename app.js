@@ -11,7 +11,7 @@ const LocalStrategy = Strategy.Strategy;
 import cookieParser from "cookie-parser";
 import nodemailer from "nodemailer";
 const app = express();
-const PORT = 5555;
+const PORT = process.env.PORT || 5555;
 
 const mongoDBURL =
   "mongodb+srv://thecodeventurer:d6pE5UHwEImhONyx@cluster0.ydp8axt.mongodb.net/";
@@ -39,7 +39,7 @@ app.use(passport.session());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","https://merina.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
     credentials: true,
@@ -135,7 +135,7 @@ const transporter = nodemailer.createTransport({
 
   const sendEmail = async (obj) => {
     const info = await transporter.sendMail({
-      from: '" Merina Admin " <janis.lehner72@ethereal.email>',
+      from: '" Merina Admin " <modiniraj1034@gmail.com>',
       to: obj.to,
       subject:'Magic Link For Authentication',
       html: obj.html,
@@ -156,7 +156,7 @@ const magicLogin = new MagicLoginStrategy.default({
   sendMagicLink: async (destination, href) => {
     await sendEmail({
       to: destination,
-      html: `<b>Click this link to finish logging in: http://localhost:5555${href}</b>`
+      html: `<b>Click this link to finish logging in: https://merina-backend-production.up.railway.app${href}</b>`
     })
   },
 
@@ -192,7 +192,7 @@ app.post("/magiclogin", magicLogin.send);
 
 // // The standard passport callback setup
 app.get("/magiclogin/callback", passport.authenticate("magiclogin"),(req,res)=>{
-  res.redirect("http://localhost:3000")
+  res.redirect("https://merina.vercel.app/register")
 });
 
 
@@ -270,7 +270,7 @@ app.get("/google", passport.authenticate("google", { scope: ["profile"] }));
 app.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3000",
+    successRedirect: "https://merina.vercel.app/register",
     failureRedirect: "/login/failed",
   })
 );
