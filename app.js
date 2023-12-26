@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser";
 import nodemailer from "nodemailer";
 import {mongoDBURL,Google_Client_Id,Google_Client_Secret,GmailPass} from "./config"
 
+
 const app = express();
 const PORT = 5555;
 
@@ -42,8 +43,7 @@ app.use(
   })
 );
 
-// to use all the http methods in routes we will use the 'use' middleware
-
+// Connecting to mongoose and starting the server
 mongoose
   .connect(mongoDBURL)
   .then(() => {
@@ -56,6 +56,8 @@ mongoose
     // console.log(error);
   });
 
+
+// Creating User Model
 const UserSchema = new mongoose.Schema({
   name: String,
   username: String,
@@ -64,6 +66,7 @@ const UserSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", UserSchema);
 
+// 
 passport.use(
   new LocalStrategy(async function (username, password, done) {
     const user = await User.findOne({ username });
@@ -188,19 +191,13 @@ const magicLogin = new MagicLoginStrategy.default({
 passport.use(magicLogin)
 
 
-// This is where we POST to from the frontend
-app.post("/magiclogin", magicLogin.send);
-
-// // The standard passport callback setup
-app.get("/magiclogin/callback", passport.authenticate("magiclogin"),(req,res)=>{
-  res.redirect("http://localhost:3000")
-});
-
-
+//Listening to home Route
 app.get("/", (req, res) => {
   if (req.isAuthenticated()) res.send("Authenticated");
   else res.send("Not Authenticated");
 });
+
+// Register request
 
 app.post("/register", async (req, res) => {
   const { name, username, password } = req.body;
@@ -223,6 +220,8 @@ app.post("/register", async (req, res) => {
   res.status(200).json({ msg: "registered Succesfully" });
 });
 
+
+// Login Request
 app.post(
   "/login",
   passport.authenticate("local", { failureRedirect: "/login" }),
@@ -239,6 +238,15 @@ app.post(
       });
   }
 );
+
+// This is where we POST to from the frontend
+app.post("/magiclogin", magicLogin.send);
+
+// // The standard passport callback setup
+app.get("/magiclogin/callback", passport.authenticate("magiclogin"),(req,res)=>{
+  res.redirect("http://localhost:3000")
+});
+
 
 
 
