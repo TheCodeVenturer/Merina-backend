@@ -43,6 +43,7 @@ app.use(
   })
 );
 
+
 // Connecting to mongoose and starting the server
 mongoose
   .connect(mongoDBURL)
